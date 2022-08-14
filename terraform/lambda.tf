@@ -40,6 +40,25 @@ resource "aws_iam_role_policy" "read_secrets" {
   })
 }
 
+resource "aws_iam_role_policy" "write_logs" {
+  name = "write_logs"
+  role = aws_iam_role.role_for_lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
 resource "aws_lambda_function" "main" {
   filename         = local.build_zip
   function_name    = local.name_prefix

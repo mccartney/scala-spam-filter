@@ -16,8 +16,8 @@ object FilterMail extends App {
   imap.select("INBOX")
 
   imap.fetch("1:*", "(INTERNALDATE)")
-  val lastMessages = imap
-    .getReplyStrings.toList.filter(_.contains("FETCH"))
+
+  val lastMessages = imap.getReplyStrings.toList.filter(_.contains("FETCH"))
     .takeRight(10)
     .map(line => line.split(" ")(1).toInt)
 
@@ -38,15 +38,23 @@ object FilterMail extends App {
     }
   }
 
-  imap.close()
+  try {
+    imap.close()
+  } catch {
+    case _: Exception =>
+  }
 
 
   def applyFilter(messageHeaders: Map[String, String]): Boolean = {
     val MailingReklamowy = ".*mailing_reklamowy@onet.pl.*".r
+    val Mailingi = ".*mailingi@onet.pl.*".r
+    val Spamerzy = ".*(?:tolpa[.]pl)|(?:Norton).*".r
 
     System.out.println(messageHeaders.get("From"))
     messageHeaders.get("From") match {
       case Some(MailingReklamowy()) => true
+      case Some(Mailingi()) => true
+      case Some(Spamerzy()) => true
       case _ => false
     }
   }

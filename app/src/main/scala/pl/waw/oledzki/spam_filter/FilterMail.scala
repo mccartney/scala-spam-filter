@@ -1,47 +1,58 @@
 package pl.waw.oledzki.spam_filter
 
+import com.amazonaws.services.lambda.runtime.Context
+import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder
+import com.amazonaws.services.secretsmanager.model.GetSecretValueRequest
 import org.apache.commons.net.imap.IMAPSClient
 
 import scala.io.Source
 
-object FilterMail extends App {
+class FilterMail extends LambdaMain {
 
-  val imap = new IMAPSClient("TLS", true)
-  imap.connect("imap.poczta.onet.pl", 993)
-  imap.login(Source.fromFile("/tmp/user.txt").mkString, Source.fromFile("/tmp/haslo.txt").mkString)
-
-  // List all mailboxes
-  // imap.list("", "*")
-
-  imap.select("INBOX")
-
-  imap.fetch("1:*", "(INTERNALDATE)")
-
-  val lastMessages = imap.getReplyStrings.toList.filter(_.contains("FETCH"))
-    .takeRight(10)
-    .map(line => line.split(" ")(1).toInt)
-
-  lastMessages.foreach { messageId =>
-    imap.fetch(messageId.toString, "BODY.PEEK[HEADER]")
-    val headers = imap.getReplyStrings.toList
-      .filter(_.contains(":"))
-      .map { line =>
-        val (key, value) = line.splitAt(line.indexOf(":"))
-        key -> value.substring(2)
-      }.toMap
-
-    if (applyFilter(headers)) {
-      System.out.println(s"Moving $messageId to Trash")
-
-      imap.copy(messageId.toString, "Trash")
-      imap.store(messageId.toString, "+FLAGS", "(\\Deleted)")
-    }
+  override def handleRequest(input: Input, context: Context): Output = {
+    val (user, password) = retrieveCredentials()
+    main(user, password)
+    Output()
   }
 
-  try {
-    imap.close()
-  } catch {
-    case _: Exception =>
+  def main(user: String, password: String): Unit = {
+    val imap = new IMAPSClient("TLS", true)
+    imap.connect("imap.poczta.onet.pl", 993)
+    imap.login(user, password)
+
+    // List all mailboxes
+    // imap.list("", "*")
+
+    imap.select("INBOX")
+
+    imap.fetch("1:*", "(INTERNALDATE)")
+
+    val lastMessages = imap.getReplyStrings.toList.filter(_.contains("FETCH"))
+      .takeRight(10)
+      .map(line => line.split(" ")(1).toInt)
+
+    lastMessages.foreach { messageId =>
+      imap.fetch(messageId.toString, "BODY.PEEK[HEADER]")
+      val headers = imap.getReplyStrings.toList
+        .filter(_.contains(":"))
+        .map { line =>
+          val (key, value) = line.splitAt(line.indexOf(":"))
+          key -> value.substring(2)
+        }.toMap
+
+      if (applyFilter(headers)) {
+        System.out.println(s"Moving $messageId to Trash")
+
+        imap.copy(messageId.toString, "Trash")
+        imap.store(messageId.toString, "+FLAGS", "(\\Deleted)")
+      }
+    }
+
+    try {
+      imap.close()
+    } catch {
+      case _: Exception =>
+    }
   }
 
 
@@ -59,4 +70,20 @@ object FilterMail extends App {
     }
   }
 
+  def retrieveCredentials(): (String, String) = {
+    val secretName = "poczta/onet/grzegon"
+    val region = "eu-west-1"
+
+    val secrets = AWSSecretsManagerClientBuilder.standard()
+      .withRegion(region)
+      .build()
+
+    val getSecretValueRequest = new GetSecretValueRequest()
+      .withSecretId(secretName);
+    val lookupResult = secrets.getSecretValue(getSecretValueRequest);
+
+    // naive JSON parsing
+    val values = lookupResult.getSecretString.split("\"")
+    (values(1), values(3))
+  }
 }

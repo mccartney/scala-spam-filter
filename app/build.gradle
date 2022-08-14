@@ -23,6 +23,8 @@ dependencies {
     implementation 'org.scala-lang:scala-library:2.13.6'
     implementation 'com.google.guava:guava:30.1-jre'
     implementation 'commons-net:commons-net:3.8.0'
+    implementation "com.amazonaws:aws-lambda-java-core:1.2.1"
+    implementation "com.amazonaws:aws-java-sdk-secretsmanager:1.12.281"
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.scalatest:scalatest_2.13:3.2.6'
@@ -31,5 +33,20 @@ dependencies {
 }
 
 application {
-    mainClass = 'pl.waw.oledzki.spam_filter.FilterMail'
+    mainClass = "pl.waw.oledzki.spam_filter.FilterMail"
+}
+
+task buildLambda(type: Zip) {
+  description = "Builds lambda-scala-spam-filter.zip"
+  duplicatesStrategy = 'include'
+
+  from compileScala
+  from processResources
+
+  archiveFileName = "lambda-scala-spam-filter.zip"
+
+  dependsOn configurations.runtimeClasspath
+  from {
+    configurations.runtimeClasspath.collect { zipTree(it) }
+  }
 }

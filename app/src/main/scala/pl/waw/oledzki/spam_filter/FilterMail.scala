@@ -48,13 +48,13 @@ object FilterMail extends App {
   def applyFilter(messageHeaders: Map[String, String]): Boolean = {
     val MailingReklamowy = ".*mailing_reklamowy@onet.pl.*".r
     val Mailingi = ".*mailingi@onet.pl.*".r
-    val Spamerzy = ".*(?:tolpa[.]pl)|(?:Norton).*".r
+    val Spamerzy = List("tolpa.pl", "Norton", "laconexion", "palaceestate")
 
     System.out.println(messageHeaders.get("From"))
     messageHeaders.get("From") match {
       case Some(MailingReklamowy()) => true
       case Some(Mailingi()) => true
-      case Some(Spamerzy()) => true
+      case Some(string) if Spamerzy.exists(_.contains(string)) => true
       case _ => false
     }
   }

@@ -33,14 +33,17 @@ class FilterMail extends LambdaMain {
 
     lastMessages.foreach { messageId =>
       imap.fetch(messageId.toString, "BODY.PEEK[HEADER]")
+      val allHeaders = imap.getReplyString
       val headers = imap.getReplyStrings.toList
-        .filter(_.contains(":"))
+        .filter(_.matches(".*:...*"))
         .map { line =>
           val (key, value) = line.splitAt(line.indexOf(":"))
           key -> value.substring(2)
         }.toMap
 
-      if (applyFilter(headers)) {
+      System.out.println(headers.get("From"))
+
+      if (applyFilter(allHeaders)) {
         System.out.println(s"Moving $messageId to Trash")
 
         imap.copy(messageId.toString, "Trash")
@@ -56,18 +59,13 @@ class FilterMail extends LambdaMain {
   }
 
 
-  def applyFilter(messageHeaders: Map[String, String]): Boolean = {
-    val MailingReklamowy = ".*mailing_reklamowy@onet.pl.*".r
-    val Mailingi = ".*mailingi@onet.pl.*".r
-    val Spamerzy = List("tolpa.pl", "Norton", "laconexion", "palaceestate")
+  def applyFilter(messageHeaders: String): Boolean = {
+    val Spamerzy = List(
+      "mailing_reklamowy@onet.pl", "mailingi@onet.pl",
+      "tolpa.pl", "Norton", "laconexion", "palaceestate", "poitiers",
+      "milka.pl", "iPhone")
 
-    System.out.println(messageHeaders.get("From"))
-    messageHeaders.get("From") match {
-      case Some(MailingReklamowy()) => true
-      case Some(Mailingi()) => true
-      case Some(string) if Spamerzy.exists(_.contains(string)) => true
-      case _ => false
-    }
+    Spamerzy.exists(messageHeaders.contains)
   }
 
   def retrieveCredentials(): (String, String) = {

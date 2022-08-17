@@ -49,6 +49,7 @@ resource "aws_iam_role_policy" "write_logs" {
     Statement = [
       {
         Action = [
+          "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]

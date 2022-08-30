@@ -63,7 +63,8 @@ class FilterMail extends LambdaMain {
     val Spamerzy = List(
       "mailing_reklamowy@onet.pl", "mailingi@onet.pl",
       "tolpa.pl", "Norton", "laconexion", "palaceestate", "poitiers",
-      "milka.pl", "iPhone")
+      "milka.pl", "iPhone", "{ Grzegon }", "simonsnewsletter.ca", "c.ru",
+      "{ Mccartney }", "quickship.pl", "Fwd:\\n", "itcoin")
 
     Spamerzy.exists(messageHeaders.contains)
   }

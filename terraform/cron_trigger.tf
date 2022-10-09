@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_event_rule" "this" {
   name                = "Every-hour"
-  schedule_expression = "cron(3 6-23 * * ? *)"
+  schedule_expression = "cron(3 4-22 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "this" {

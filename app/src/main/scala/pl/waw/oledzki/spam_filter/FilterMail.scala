@@ -64,8 +64,11 @@ class FilterMail extends LambdaMain {
       "mailing_reklamowy@onet.pl", "mailingi@onet.pl",
       "tolpa.pl", "Norton", "laconexion", "palaceestate", "poitiers",
       "milka.pl", "iPhone", "{ Grzegon }", "simonsnewsletter.ca", "c.ru",
-      "{ Mccartney }", "quickship.pl", "Fwd:\\n", "itcoin")
-
+      "{ Mccartney }", "quickship.pl", "Fwd:\\n", "itcoin", "message has been altered",
+      "hou.top", "{Grzegon}", "{Mccartney}", "BRAK POTWIERDZENIA",
+      "sunderlandecho", "fastymail", "pastapoint0", "cyberski.net", "Centrum dystrybucji - Onet",
+      "QUICK LOAN", "stxkr.pl", "dezeen.com", "jrojbh.ru", "From: śledzenie przesyłki",
+      "swagbucks.com", "milka.pl")
     Spamerzy.exists(messageHeaders.contains)
   }
 

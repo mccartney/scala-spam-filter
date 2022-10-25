@@ -68,7 +68,7 @@ class FilterMail extends LambdaMain {
       "hou.top", "{Grzegon}", "{Mccartney}", "BRAK POTWIERDZENIA",
       "sunderlandecho", "fastymail", "pastapoint0", "cyberski.net", "Centrum dystrybucji - Onet",
       "QUICK LOAN", "stxkr.pl", "dezeen.com", "jrojbh.ru", "From: śledzenie przesyłki",
-      "swagbucks.com", "milka.pl")
+      "swagbucks.com", "milka.pl", "lucindaburman", "turbomail.pl")
     Spamerzy.exists(messageHeaders.contains)
   }
 

@@ -28,7 +28,7 @@ class FilterMail extends LambdaMain {
     imap.fetch("1:*", "(INTERNALDATE)")
 
     val lastMessages = imap.getReplyStrings.toList.filter(_.contains("FETCH"))
-      .takeRight(10)
+      .takeRight(20)
       .map(line => line.split(" ")(1).toInt)
 
     lastMessages.foreach { messageId =>
@@ -69,8 +69,8 @@ class FilterMail extends LambdaMain {
       "sunderlandecho", "fastymail", "pastapoint0", "cyberski.net", "Centrum dystrybucji - Onet",
       "QUICK LOAN", "stxkr.pl", "dezeen.com", "jrojbh.ru", "From: śledzenie przesyłki",
       "swagbucks.com", "milka.pl", "lucindaburman", "turbomail.pl", "servicecentralinc.com",
-      "podkalicki.com", "ezvacuu.com", "pastapoint0", "Vuitton", "timedlacb.pl",
-      "silver-stage.de",
+      "podkalicki.com", "ezvacuum.com", "Vuitton", "timedlacb.pl",
+      "silver-stage.de", "o2.pl.com", "argongames", "expertsender.com",
       )
     Spamerzy.exists(messageHeaders.contains)
   }

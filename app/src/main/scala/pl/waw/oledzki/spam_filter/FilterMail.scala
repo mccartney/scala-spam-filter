@@ -71,6 +71,7 @@ class FilterMail extends LambdaMain {
       "swagbucks.com", "milka.pl", "lucindaburman", "turbomail.pl", "servicecentralinc.com",
       "podkalicki.com", "ezvacuum.com", "Vuitton", "timedlacb.pl",
       "silver-stage.de", "o2.pl.com", "argongames", "expertsender.com",
+      "sendcampaigns.pl",
       )
     Spamerzy.exists(messageHeaders.contains)
   }

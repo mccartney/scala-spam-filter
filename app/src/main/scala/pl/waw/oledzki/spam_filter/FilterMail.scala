@@ -16,20 +16,29 @@ class FilterMail extends LambdaMain {
   }
 
   def main(user: String, password: String): Unit = {
+    println(">1")
     val imap = new IMAPSClient("TLS", true)
     imap.connect("imap.poczta.onet.pl", 993)
     imap.login(user, password)
+
+    println(">2")
 
     // List all mailboxes
     // imap.list("", "*")
 
     imap.select("INBOX")
 
+    println(">3")
+
     imap.fetch("1:*", "(INTERNALDATE)")
+
+    println(">4")
 
     val lastMessages = imap.getReplyStrings.toList.filter(_.contains("FETCH"))
       .takeRight(20)
       .map(line => line.split(" ")(1).toInt)
+
+    println(s">5 ${lastMessages.size}")
 
     lastMessages.foreach { messageId =>
       imap.fetch(messageId.toString, "BODY.PEEK[HEADER]")
@@ -50,6 +59,8 @@ class FilterMail extends LambdaMain {
         imap.store(messageId.toString, "+FLAGS", "(\\Deleted)")
       }
     }
+
+    println(s">6 BEFORE CLOSE")
 
     try {
       imap.close()
@@ -72,6 +83,10 @@ class FilterMail extends LambdaMain {
       "podkalicki.com", "ezvacuum.com", "Vuitton", "timedlacb.pl",
       "silver-stage.de", "o2.pl.com", "argongames", "expertsender.com",
       "sendcampaigns.pl",
+      "campaignzone.pl", "newsletternews.pl",
+      "pressingphotoshop.org.uk",
+      "xjkasjfaosenagiasejge", "fentanyl",
+      
       )
     Spamerzy.exists(messageHeaders.contains)
   }

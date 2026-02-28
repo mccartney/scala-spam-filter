@@ -87,7 +87,9 @@ class FilterMail extends LambdaMain {
       "pressingphotoshop.org.uk",
       "xjkasjfaosenagiasejge", "fentanyl",
       "perfections.shop", "rrbv.de",
-      "emaillabs.net.pl", "clicknextxpro.pl",
+      "clicknextxpro.pl", "clickhorizonpro.pl",
+      "tGrzegon",
+      "8-e04c4.firebaseapp.com", "support3-4da6e.firebaseapp.com", 
       )
     Spamerzy.exists(messageHeaders.contains)
   }
